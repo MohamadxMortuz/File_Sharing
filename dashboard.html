@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureShare</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+        .btn-logout {
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .dashboard-content {
+            padding: 40px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .upload-section {
+            margin-bottom: 40px;
+        }
+        .upload-section h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        .upload-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-box:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .upload-box p {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .upload-box span {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        .files-section h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        .files-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            width: 300px;
+            font-size: 14px;
+        }
+        .file-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+        .file-card:hover {
+            transform: translateY(-5px);
+        }
+        .file-info h3 {
+            color: white;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        .file-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-copy {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+        .btn-delete {
+            background: rgba(255, 0, 0, 0.3);
+            color: white;
+        }
+        .btn-delete:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+        .progress-bar {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 30px;
+            display: none;
+        }
+        .progress-fill {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        @media (max-width: 768px) {
+            .navbar, .dashboard-content { padding: 20px; }
+            .files-header { flex-direction: column; gap: 15px; }
+            .search-input { width: 100%; }
+            .file-card { flex-direction: column; gap: 15px; }
+            .file-actions { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">SecureShare</div>
+        <div class="user-section">
+            <span>Welcome, John Doe</span>
+            <button class="btn-logout" onclick="window.location.href='demo.html'">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div class="upload-section">
+            <h2>Upload File</h2>
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" style="display: none;" onchange="handleUpload(event)">
+                <div class="upload-icon">📁</div>
+                <p>Click to select file</p>
+                <span>Up to 30GB supported</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="files-section">
+            <div class="files-header">
+                <h2>My Files</h2>
+                <input type="text" placeholder="Search files..." class="search-input">
+            </div>
+
+            <div class="file-card">
+                <div class="file-info">
+                    <h3>Project_Presentation.pdf</h3>
+                    <p>15.2 MB • Uploaded on Nov 5, 2025</p>
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">Downloads: 3</p>
+                </div>
+                <div class="file-actions">
+                    <button class="btn btn-copy" onclick="copyLink()">Copy Link</button>
+                    <button class="btn btn-delete" onclick="deleteFile(this)">Delete</button>
+                </div>
+            </div>
+
+            <div class="file-card">
+                <div class="file-info">
+                    <h3>Video_Tutorial.mp4</h3>
+                    <p>2.8 GB • Uploaded on Nov 4, 2025</p>
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">Downloads: 12</p>
+                </div>
+                <div class="file-actions">
+                    <button class="btn btn-copy" onclick="copyLink()">Copy Link</button>
+                    <button class="btn btn-delete" onclick="deleteFile(this)">Delete</button>
+                </div>
+            </div>
+
+            <div class="file-card">
+                <div class="file-info">
+                    <h3>Database_Backup.zip</h3>
+                    <p>850 MB • Uploaded on Nov 3, 2025</p>
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">Downloads: 1</p>
+                </div>
+                <div class="file-actions">
+                    <button class="btn btn-copy" onclick="copyLink()">Copy Link</button>
+                    <button class="btn btn-delete" onclick="deleteFile(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const progressBar = document.getElementById('progressBar');
+                const progressFill = document.getElementById('progressFill');
+                progressBar.style.display = 'block';
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressFill.style.width = progress + '%';
+                    progressFill.textContent = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            alert('File uploaded successfully!');
+                            progressBar.style.display = 'none';
+                            progressFill.style.width = '0%';
+                        }, 500);
+                    }
+                }, 200);
+            }
+        }
+
+        function copyLink() {
+            alert('Share link copied to clipboard!\nhttps://secureshare.com/share/abc123xyz');
+        }
+
+        function deleteFile(btn) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                btn.closest('.file-card').remove();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureShare - File Sharing Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .btn-outline:hover {
+            background: white;
+            color: #667eea;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            color: white;
+        }
+        .hero-title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn-large {
+            padding: 16px 40px;
+            background: white;
+            color: #667eea;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .features {
+            padding: 80px 50px;
+            text-align: center;
+        }
+        .features h2 {
+            color: white;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        .demo-section {
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .demo-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+        .demo-card h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .demo-card ol {
+            margin-left: 20px;
+            line-height: 2;
+        }
+        .demo-card code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 32px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .navbar { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">SecureShare</div>
+        <div class="nav-buttons">
+            <a href="login.html" class="btn btn-outline">Login</a>
+            <a href="signup.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 class="hero-title">Enterprise-grade file sharing made accessible</h1>
+        <p class="hero-subtitle">Share files up to 30GB securely with military-grade encryption</p>
+        <div class="hero-buttons">
+            <a href="signup.html" class="btn btn-large">Get Started Free</a>
+            <a href="login.html" class="btn btn-outline btn-large">Sign In</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Why Choose SecureShare?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📤</div>
+                <h3>Large Uploads</h3>
+                <p>Upload files up to 30GB with chunked transfer for reliability</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>AES Encryption</h3>
+                <p>Military-grade 256-bit encryption protects your files</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Secure Links</h3>
+                <p>Generate unique shareable links with one click</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Dashboard</h3>
+                <p>Manage all your files from a centralized dashboard</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="demo-section">
+        <div class="demo-card">
+            <h3>🚀 How to Run the Full Application</h3>
+            <ol>
+                <li>Open Terminal 1 and run:
+                    <br><code>cd /Users/shiveshsrivastava/Desktop/Django1/secure-file-sharing/backend && node server.js</code>
+                </li>
+                <li>Open Terminal 2 and run:
+                    <br><code>cd /Users/shiveshsrivastava/Desktop/Django1/secure-file-sharing/frontend && npm start</code>
+                </li>
+                <li>Browser will open automatically to <code>http://localhost:3000</code></li>
+                <li>Register an account and start uploading files!</li>
+            </ol>
+        </div>
+    </section>
+</body>
+</html>
