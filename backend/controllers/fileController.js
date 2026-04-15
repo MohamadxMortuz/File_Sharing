@@ -131,6 +131,81 @@ exports.deleteFile = async (req, res) => {
   }
 };
 
+exports.previewFile = async (req, res) => {
+  try {
+    const file = await File.findOne({ shareLink: req.params.shareLink });
+    if (!file) return res.status(404).json({ error: 'File not found' });
+
+    const bucket = getBucket();
+    const chunks = [];
+    const downloadStream = bucket.openDownloadStream(file.gridfsId);
+
+    await new Promise((resolve, reject) => {
+      downloadStream.on('data', chunk => chunks.push(chunk));
+      downloadStream.on('end', resolve);
+      downloadStream.on('error', reject);
+    });
+
+    const encryptedBuffer = Buffer.concat(chunks);
+    const gridfsFiles = await bucket.find({ _id: file.gridfsId }).toArray();
+    const iv = Buffer.from(gridfsFiles[0].metadata.iv, 'hex');
+    const decrypted = decryptBuffer(encryptedBuffer, iv);
+
+    res.set({
+      'Content-Type': file.mimeType,
+      'Content-Disposition': 'inline'
+    });
+    res.send(decrypted);
+  } catch (error) {
+    console.error('Preview error:', error);
+    res.status(500).json({ error: 'File preview failed' });
+  }
+};
+
+exports.getSharedFile = async (req, res) => {
+  try {
+    const file = await File.findOne({ shareLink: req.params.shareLink });
+    if (!file) return res.status(404).json({ error: 'File not found' });
+
+    const bucket = getBucket();
+    const chunks = [];
+    const downloadStream = bucket.openDownloadStream(file.gridfsId);
+
+    await new Promise((resolve, reject) => {
+      downloadStream.on('data', chunk => chunks.push(chunk));
+      downloadStream.on('end', resolve);
+      downloadStream.on('error', reject);
+    });
+
+    const encryptedBuffer = Buffer.concat(chunks);
+    const gridfsFiles = await bucket.find({ _id: file.gridfsId }).toArray();
+    const iv = Buffer.from(gridfsFiles[0].metadata.iv, 'hex');
+    const decrypted = decryptBuffer(encryptedBuffer, iv);
+
+    file.downloads += 1;
+    await file.save();
+
+    res.set({
+      'Content-Type': file.mimeType,
+      'Content-Disposition': `attachment; filename="${file.originalName}"`
+    });
+    res.send(decrypted);
+  } catch (error) {
+    console.error('Shared download error:', error);
+    res.status(500).json({ error: 'File download failed' });
+  }
+};
+
+exports.getFileMeta = async (req, res) => {
+  try {
+    const file = await File.findOne({ shareLink: req.params.shareLink });
+    if (!file) return res.status(404).json({ error: 'File not found' });
+    res.json({ fileName: file.originalName, size: file.size, type: file.mimeType });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch file info' });
+  }
+};
+
 exports.getFileInfo = async (req, res) => {
   try {
     const file = await File.findOne({ shareLink: req.params.shareLink }).populate('uploadedBy', 'fullName');

@@ -12,6 +12,9 @@ const upload = multer({
 
 router.post('/upload', auth, upload.single('file'), fileController.uploadFile);
 router.get('/my-files', auth, fileController.getUserFiles);
+router.get('/shared/meta/:shareLink', fileController.getFileMeta);
+router.get('/shared/:shareLink', fileController.getSharedFile);
+router.get('/preview/:shareLink', fileController.previewFile);
 router.delete('/:id', auth, fileController.deleteFile);
 router.get('/info/:shareLink', fileController.getFileInfo);
 router.get('/download/:shareLink', fileController.downloadFile);

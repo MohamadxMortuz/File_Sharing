@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { fileService } from '../services/api';
 import './Dashboard.css';
 
+const API_BASE = 'http://localhost:5001/api';
+
 const FILE_ICONS = {
   image: '🖼️', video: '🎬', audio: '🎵', pdf: '📄',
   zip: '🗜️', word: '📝', excel: '📊', text: '📃', default: '📁'
@@ -37,6 +39,10 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sharedLink, setSharedLink] = useState('');
+  const [downloading, setDownloading] = useState(false);
+  const [linkPreview, setLinkPreview] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const fetchFiles = useCallback(async (searchTerm = '') => {
     try {
@@ -100,6 +106,62 @@ const Dashboard = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const extractShareId = (input) => {
+    const trimmed = input.trim();
+    return trimmed.includes('/share/') ? trimmed.split('/share/')[1] : trimmed;
+  };
+
+  const handleSharedLinkChange = async (e) => {
+    const val = e.target.value;
+    setSharedLink(val);
+    setLinkPreview(null);
+    const shareId = extractShareId(val);
+    if (!shareId) return;
+    setPreviewLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/files/info/${shareId}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setLinkPreview({
+        fileName: data.originalName,
+        size: data.size,
+        type: data.mimeType
+      });
+    } catch {
+      setLinkPreview(null);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const handlePreview = () => {
+    const shareId = extractShareId(sharedLink);
+    window.open(`${API_BASE}/files/preview/${shareId}`, '_blank');
+  };
+
+  const handleSharedDownload = async () => {
+    const shareId = extractShareId(sharedLink);
+    setDownloading(true);
+    try {
+      const response = await fetch(`${API_BASE}/files/download/${shareId}`);
+      if (!response.ok) throw new Error();
+      const blob = await response.blob();
+      const filename = linkPreview?.fileName || 'file';
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setSharedLink('');
+      setLinkPreview(null);
+    } catch {
+      alert('Invalid or expired link');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/');
@@ -129,6 +191,50 @@ const Dashboard = () => {
             {uploading && (
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: `${uploadProgress}%` }}>{uploadProgress}%</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Shared Link Download Section */}
+        <div className="shared-download-section">
+          <h2>Download via Shared Link</h2>
+          <div className="shared-download-box">
+            <div className="shared-input-row">
+              <input
+                type="text"
+                className="shared-link-input"
+                placeholder="Paste shared link here..."
+                value={sharedLink}
+                onChange={handleSharedLinkChange}
+                disabled={downloading}
+              />
+              <button
+                className="btn-shared-preview"
+                onClick={handlePreview}
+                disabled={!linkPreview || downloading}
+              >
+                👁️ Preview
+              </button>
+              <button
+                className="btn-shared-download"
+                onClick={handleSharedDownload}
+                disabled={!sharedLink.trim() || downloading}
+              >
+                {downloading ? 'Downloading...' : '⬇️ Download'}
+              </button>
+            </div>
+            {previewLoading && <div className="link-preview-loading">Looking up file...</div>}
+            {linkPreview && (
+              <div className="link-preview">
+                <span className="link-preview-icon">{getFileIcon(linkPreview.type, linkPreview.fileName)}</span>
+                <div className="link-preview-info">
+                  <span className="link-preview-name">{linkPreview.fileName}</span>
+                  <div className="link-preview-meta">
+                    <span className="meta-badge">📦 {formatFileSize(linkPreview.size)}</span>
+                    <span className="meta-badge type-badge">{linkPreview.type?.split('/')[1]?.toUpperCase() || 'FILE'}</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
